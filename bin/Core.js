@@ -10,6 +10,10 @@ function clone(o){
 }
 
 function Simulation(sim){
+    var vars = {};
+    var currentYear = 0;
+    var currentSimulationName = "";
+    
     var defaultVars = clone(sim.Start);
     var series = {};
     var steps = sim.steps;
@@ -24,7 +28,7 @@ function Simulation(sim){
     }
 
     function transformProbabilityInYears(probability, years){
-        var result = Math.round(years - (probability * years))+1;
+        var result = Math.round(years - (probability * years));
         //do something else here with the result !?
         return result;
     }
@@ -59,7 +63,7 @@ function Simulation(sim){
     };
 
     this.setProbability = function(eventName, value, years){
-        eventsInYear[eventName] = transformProbabilityInYears(value , years);
+        eventsInYear[eventName] = currentYear + transformProbabilityInYears(value , years);
     };
 
     this.currentScenario = function(){
@@ -67,9 +71,7 @@ function Simulation(sim){
 
     };
 
-    var vars = {};
-    var currentYear = 0;
-    var currentSimulation = "";
+    
 
     this.setVar = function(name, value){
         vars[name] = value;
@@ -99,6 +101,7 @@ function Simulation(sim){
         for(var v in eventsInYear){
             if(eventsInYear[v] == step){
                 //probably it should happen so we make it happen
+                console.log(">>>>>>>>>>>>>>>>>>>>Happening", v, " in simulation ", fork)
                 self.currentEvent = sim.Events[v].Effect;
                 self.currentEvent();
             }
@@ -109,14 +112,15 @@ function Simulation(sim){
     this.runAll = function(){
         console.log(forks);
         forks.forEach(function(forkName){
-            currentSimulation = forkName;
+            currentSimulationName = forkName;
             vars = clone(defaultVars);
             setEventsProbability(forkName);
 
-            console.log(forkName, "Years with events:", eventsInYear);
+            //console.log("Initial:", forkName, " Years with events:", JSON.stringify(eventsInYear));
             for(currentYear = 0; currentYear < sim.steps; currentYear++){
                 runStep(currentYear, forkName);
             }
+            console.log("After simulation:", forkName, "Years with events:", JSON.stringify(eventsInYear));
         })
     };
 

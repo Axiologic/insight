@@ -13,10 +13,9 @@ var sim = {
     Scenarios:{
         Optimistic:function(){
             this.setProbability("Manipulation",0.3, 10);
-            this.setProbability("AvoidCatastrophe",0.2, 10);
         },
         Pessimistic:function(){
-            this.increaseProbability('Manipulation', 0.1, 10); //make it more probable
+            this.increaseProbability('Manipulation', 0.8, 10); //make it more probable
             this.decreaseProbability('AvoidCatastrophe', 0.05, 10); //make it less probable
         }
     },
@@ -37,9 +36,9 @@ var sim = {
             Years: 10,
             Probability: 0.9,
             Effect:function(currentScenario, history){
-                this.setVar('Happiness', 0.7);
+                this.setVar('Happiness', 0.8);
                 this.increaseProbability('AvoidCatastrophe', 0.3, 5); //make it more probable
-                this.increaseProbability('Catastrophe', 0.3, 5); //make it more probable
+
             }
         },
         AvoidCatastrophe: {
@@ -47,6 +46,7 @@ var sim = {
             Years: 10,
             Probability: 0.3,
             Effect:function(currentScenario){
+                this.setProbability("Manipulation",0.00001, 20);
             }
         },
         Catastrophe: {
@@ -63,5 +63,5 @@ var sim = {
 
 var res = h.run(sim);
 h.print(res, "Happiness");
-h.print(res, "People");
+//h.print(res, "People");
 h.print(res, "Casualties");
