@@ -1,67 +1,67 @@
 /**
  * Created by salbo on 03/04/2016.
  */
-var h = require("../bin/core.js");
+var h = require("../bin/Core.js");
 
 var sim = {
     steps:10,
     Start:{
         People:7000000000,
-        Happiness:0.900
+        Happiness:0.900,
+        Casualties:0
     },
     Scenarios:{
-        Optimistic:{
-        "Manipulation":-0.05,
-        "AvoidCatastrophe":0.1
+        Optimistic:function(){
+            this.setProbability("Manipulation",0.3, 10);
+            this.setProbability("AvoidCatastrophe",0.2, 10);
         },
-        Pessimistic:{
-        "Manipulation":0.05,
-        "AvoidCatastrophe":0.05
+        Pessimistic:function(){
+            this.increaseProbability('Manipulation', 0.1, 10); //make it more probable
+            this.decreaseProbability('AvoidCatastrophe', 0.05, 10); //make it less probable
         }
     },
-    stepAdjust:function(history){
-        return this.Happiness;
+    stepActions:function(history, currentYear){
+        //nothing but could change probabilities, set variables,etc...
     },
     Events: {
         thisArticle: {
-            Description: "Folosirea unei metode de analiza a efectelor tehnologiei asupra fericirii",
+            Description: "Inventarea unei metode de analiza a efectelor tehnologiei asupra fericirii",
             Years: 1,
             Probability: 1,
-            Effect: {
-                Optimistic: 0,
-                Pessimistic: 0
+            Effect: function(){
+
             }
         },
         Manipulation: {
             Description: "Manipulare sociala prin folosirea metodei",
             Years: 10,
-            Probability: 0.1,
-            Effect: {
-                Optimistic: -0.001,
-                Pessimistic: -0.1
+            Probability: 0.9,
+            Effect:function(currentScenario, history){
+                this.setVar('Happiness', 0.7);
+                this.increaseProbability('AvoidCatastrophe', 0.3, 5); //make it more probable
+                this.increaseProbability('Catastrophe', 0.3, 5); //make it more probable
             }
         },
         AvoidCatastrophe: {
-            Description: "Evitarea unor evenimente catastrofale datorita metodei",
+            Description: "Folosirea pe scara larga si evitarea unor evenimente catastrofale datorita metodei",
             Years: 10,
             Probability: 0.3,
-            Effect: {
-                Optimistic: 0.0,
-                Pessimistic: 0.0,
-                disable: "Catastrophe"
+            Effect:function(currentScenario){
             }
         },
         Catastrophe: {
             Description: "Catastrophe",
-            Years: 30,
-            Probability: 0.5,
-            Effect: {
-                Optimistic: -0.1,
-                Pessimistic: -0.5
+            Years: 20,
+            Probability: 0.6,
+            Effect:function(currentScenario){
+                this.setVar('Happiness', 0.80);
+                this.setVar("Casualties", 0.0001 * this.getVar("People"));
             }
         }
     }
 };
 
 var res = h.run(sim);
-h.print(res);
+h.print(res, "Happiness");
+h.print(res, "People");
+h.print(res, "Casualties");
