@@ -47,6 +47,9 @@ var sim = {
             Probability: 0.3,
             Effect:function(currentScenario){
                 this.setProbability("Manipulation",0.00001, 20);
+
+
+
             }
         },
         Catastrophe: {
