@@ -56,5 +56,4 @@ var sim = {
 };
 
 var res = h.run(sim);
-h.print(res, "People");
 h.print(res, "Casualties");
