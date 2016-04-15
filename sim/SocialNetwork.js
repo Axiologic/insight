@@ -1,7 +1,7 @@
 /**
  * Created by salbo on 03/04/2016.
  */
-var h = require("../bin/Core.js");
+var h = require("../lib/Core.js");
 
 var sim = {
     steps:10,
@@ -42,8 +42,8 @@ var sim = {
             Belief: 0.4,
             Effect:function(currentScenario, history){
                 this.inDictatorship = true;
-                this.increaseBelief("Retaliation",0.8);
-                this.increaseBelief("Restoration",0.9);
+                this.setBelief("Retaliation",0.8);
+                this.setBelief("Restoration",0.9);
             }
         },
         Retaliation: {

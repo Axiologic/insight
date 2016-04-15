@@ -1,7 +1,7 @@
 /**
  * Created by salbo on 03/04/2016.
  */
-var h = require("../bin/Core.js");
+var h = require("./Core.js");
 
 var sim = {
     steps:10,
