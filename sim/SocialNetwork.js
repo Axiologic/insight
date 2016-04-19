@@ -5,6 +5,7 @@ var h = require("../lib/Core.js");
 
 var sim = {
     steps:10,
+    maxSimulations:10000,
     Variables:{
         Casualties:0
     },
@@ -64,5 +65,5 @@ var sim = {
 };
 
 var res = h.run(sim);
-h.print(res, "People");
-h.print(res, "Casualties");
+//h.print(res, "Standard");
+h.print(res, "Standard", "Casualties");
