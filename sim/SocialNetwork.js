@@ -5,7 +5,8 @@ var h = require("../lib/Core.js");
 
 var sim = {
     steps:10,
-    maxSimulations:10000,
+    maxSimulations:10000000,
+    minSimulations:1000,
     Variables:{
         Casualties:0
     },
@@ -14,34 +15,33 @@ var sim = {
             this.People         = 10000000;
             this.UsagePercent   = 0.3;
             this.AtRisk         = 0;
-            this.RiskPercent    = 0.01;
+            this.RiskPercent    = 0.1;
+        },
+        StandardRepeat:function(){
+            this.People         = 10000000;
+            this.UsagePercent   = 0.3;
+            this.AtRisk         = 0;
+            this.RiskPercent    = 0.1;
         }
     },
-    beforeStep:function(history, currentYear){
+    beforeEachYear:function(){
         if(this.UsagePercent < 0.8){
             this.UsagePercent += 0.1;
         }
-        this.AtRisk = this.People * this.UsagePercent * this.RiskPercent;
+        this.AtRisk = Math.floor(this.People * this.UsagePercent * this.RiskPercent);
         this.Casualties = 0;
     },
-    step:function(history, currentYear){
+    eachYear:function(){
+        //console.log("Running action for year" , this.currentYear(), this.inDictatorship);
         if(this.inDictatorship){
-            this.Casualties += 0.01 * this.AtRisk;
+            this.Casualties += Math.floor(0.01 * this.AtRisk);
         }
     },
     Events: {
-        useOfSocialNetworkX: {
-            Description: "Use of the social network",
-            Belief: 1,
-            recurrent:true,
-            Effect: function(){
-
-            }
-        },
         Dictatorship: {
             Description: "Major change in the government. ",
             Belief: 0.4,
-            Effect:function(currentScenario, history){
+            Effect:function(){
                 this.inDictatorship = true;
                 this.setBelief("Retaliation",0.8);
                 this.setBelief("Restoration",0.9);
@@ -49,9 +49,9 @@ var sim = {
         },
         Retaliation: {
             Description: "Use of private data to punish disobeying citizens",
-            Belief: 0.1,
+            Belief: 0.1,  //it could happen even without Dictatorship
             Effect:function(currentScenario, history){
-                this.Casualties += 0.1 * this.AtRisk;
+                this.Casualties +=  Math.floor(0.01 * this.AtRisk);
             }
         },
         Restoration: {
@@ -67,3 +67,4 @@ var sim = {
 var res = h.run(sim);
 //h.print(res, "Standard");
 h.print(res, "Standard", "Casualties");
+h.print(res, "StandardRepeat", "Casualties");
