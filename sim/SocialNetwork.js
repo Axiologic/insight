@@ -6,7 +6,7 @@ var h = require("../lib/Core.js");
 var sim = {
     steps:10,
     maxSimulations:100000,
-    minSimulations:10,
+    minSimulations:100,
     Variables:{
         Casualties:0
     },
