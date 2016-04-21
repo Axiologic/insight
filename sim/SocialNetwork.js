@@ -4,24 +4,27 @@
 var h = require("../lib/Core.js");
 
 var sim = {
-    steps:10,
-    maxSimulations:100000,
+    steps:20,
+    maxSimulations:10000,
     minSimulations:100,
+    distribution:"normal", //"normal/uniform/certainly"
     Variables:{
-        Casualties:0
+        annualCausalities:0,
+        Casualties:0,
+        People:1500000000
     },
     Scenarios:{
-        Standard:function(){
-            this.People         = 10000000;
+        Pessimistic:function(){
             this.UsagePercent   = 0.3;
             this.AtRisk         = 0;
             this.RiskPercent    = 0.1;
+            this.setBelief("Dictatorship",0.2);
         },
-        StandardRepeat:function(){
-            this.People         = 10000000;
+        Optimistic:function(){
             this.UsagePercent   = 0.3;
             this.AtRisk         = 0;
             this.RiskPercent    = 0.1;
+            this.setBelief("Dictatorship",0.1);
         }
     },
     beforeEachYear:function(){
@@ -29,18 +32,20 @@ var sim = {
             this.UsagePercent += 0.1;
         }
         this.AtRisk = Math.floor(this.People * this.UsagePercent * this.RiskPercent);
-        this.Casualties = 0;
+        this.annualCausalities = 0;
     },
     eachYear:function(){
         //console.log("Running action for year" , this.currentYear(), this.inDictatorship);
         if(this.inDictatorship){
-            this.Casualties += Math.floor(0.01 * this.AtRisk);
+            this.annualCausalities += Math.floor(0.01 * this.AtRisk);
         }
+        this.Casualties += this.annualCausalities;
     },
     Events: {
         Dictatorship: {
             Description: "Major change in the government. ",
             Belief: 0.4,
+            distribution:"normal",
             Effect:function(){
                 this.inDictatorship = true;
                 this.setBelief("Retaliation",0.8);
@@ -51,7 +56,7 @@ var sim = {
             Description: "Use of private data to punish disobeying citizens",
             Belief: 0.1,  //it could happen even without Dictatorship
             Effect:function(currentScenario, history){
-                this.Casualties +=  Math.floor(0.01 * this.AtRisk);
+                this.annualCausalities +=  Math.floor(0.01 * this.AtRisk);
             }
         },
         Restoration: {
@@ -60,11 +65,23 @@ var sim = {
             Effect:function(currentScenario){
                 this.inDictatorship = false;
             }
+        },
+        identityTheft:{
+            Description: "Return to democracy. End of",
+            Belief: 0,
+            Effect:function(currentScenario){
+                this.identityTheftVictims = 0.1 * this.People;
+            }
         }
     }
 };
 
 var res = h.run(sim);
 //h.print(res, "Standard");
-h.print(res, "Standard", "Casualties");
-h.print(res, "StandardRepeat", "Casualties");
+console.log("Estimated total number of causalities in Pessimistic case:", res.total("Pessimistic", "annualCausalities"));
+h.print(res, "Pessimistic", "Casualties");
+h.print(res, "Pessimistic", "annualCausalities");
+
+console.log("Estimated total number of causalities in Optimistic case:", res.total("Optimistic", "annualCausalities"));
+h.print(res, "Optimistic", "Casualties");
+h.print(res, "Optimistic", "annualCausalities");
