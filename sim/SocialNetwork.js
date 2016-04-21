@@ -17,7 +17,7 @@ var sim = {
         Pessimistic:function(){
             this.UsagePercent   = 0.3;
             this.AtRisk         = 0;
-            this.RiskPercent    = 0.1;
+            this.RiskPercent    = 0.3;
             this.setBelief("Dictatorship",0.2);
         },
         Optimistic:function(){
