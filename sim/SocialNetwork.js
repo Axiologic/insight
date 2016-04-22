@@ -4,14 +4,14 @@
 var h = require("../lib/Core.js");
 
 var sim = {
-    steps:20,
+    years:20,
     maxSimulations:10000,
     minSimulations:100,
     distribution:"normal", //"normal/uniform/certainly"
     Variables:{
         annualCausalities:0,
         Casualties:0,
-        People:1500000000
+        People:1000000000
     },
     Scenarios:{
         Pessimistic:function(){

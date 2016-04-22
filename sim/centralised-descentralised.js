@@ -1,59 +1,57 @@
 /**
  * Created by salbo on 03/04/2016.
  */
-var h = require("./Core.js");
+var h = require("../lib/Core.js");
 
 var sim = {
-    steps:10,
-    threshold:0.1,
+    years:10,
+    maxSimulations:100000,
+    minSimulations:1000,
+    threshold:0.00001,
+    distribution:"uniform",
     Variables:{
-        Casualties:0
+        People:100000000,
+        harmedPercent:0.1,
+        Harmed:0
     },
+
     Scenarios:{
         Centralised:function(){
-            this.People         = 10000000;
-            this.RiskPercent    = 0.01;
-            this.originalBeliefBreach   = 0.2;
-            this.originalBeliefBreachSolved = 0.5;
-            this.setBelief("Breach", this.originalBeliefBreach);
-
+            this.originalBelief = 0.01 ;
+            this.subsistems = 1;
+            this.setBelief("Breach", this.originalBelief);
         },
         Decentralised:function(){
-            this.People         = 10000000;
-            this.RiskPercent    = 0.01;
-            this.originalBeliefBreach = 0.1;
-            this.originalBeliefBreachSolved = 0.8;
-            this.setBelief("Breach", this.originalBeliefBreach);
+            this.originalBelief = 0.01;
+            this.subsistems = 50;
+            this.setBelief("Breach", this.originalBelief);
         }
     },
-    beforeStep:function(history, currentYear){
-        this.AtRisk = this.People * this.RiskPercent;
-        this.Casualties = 0;
+    beforeEachYear:function(history, currentYear){
+        this.Harmed  = 0;
     },
-    step:function(history, currentYear){
-        if(this.looseData) {
-            this.Casualties += 0.1 * this.AtRisk;
-        }
+    eachYear:function(history, currentYear){
+        this.setBelief("Breach", this.originalBelief);
     },
     Events: {
         Breach: {
             Description: "Major breach affecting all the data. ",
-            Belief: 0,
             Effect:function(currentScenario, history){
-                this.looseData = true;
-                this.setBelief("BreachSolved",this.originalBeliefBreachSolved);
-            }
-        },
-        BreachSolved: {
-            Description: "Breach detected and solved",
-            Belief: 0,
-            Effect:function(currentScenario, history){
-                this.looseData = false;
-                this.setBelief("Breach",this.originalBeliefBreach);
+                if( this.subsistems == 1){
+                    this.Harmed += 50 * this.harmedPercent* this.People /50;
+                } else {
+                    var howMany = Math.floor(Math.random()*49)+1;
+                    //console.log(howMany , this.harmedPercent ,  this.People);
+                    this.Harmed += howMany * this.harmedPercent *  this.People/50;
+                }
+
             }
         }
     }
 };
 
 var res = h.run(sim);
-h.print(res, "Casualties");
+console.log("Estimated total number of causalities in Centralised case:", res.sum("Centralised", "Harmed"));
+h.print(res, "Centralised",     "Harmed");
+console.log("Estimated total number of causalities in Decentralised case:", res.sum("Decentralised", "Harmed"));
+h.print(res, "Decentralised",   "Harmed");
