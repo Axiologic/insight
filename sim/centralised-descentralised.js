@@ -6,15 +6,13 @@ var h = require("../lib/Core.js");
 var sim = {
     years:10,
     maxSimulations:100000,
-    minSimulations:1000,
-    threshold:0.00001,
-    distribution:"uniform",
+    minSimulations:200,
+    distribution:"normal",
     Variables:{
         People:100000000,
         harmedPercent:0.1,
         Harmed:0
     },
-
     Scenarios:{
         Centralised:function(){
             this.originalBelief = 0.01 ;
@@ -37,14 +35,9 @@ var sim = {
         Breach: {
             Description: "Major breach affecting all the data. ",
             Effect:function(currentScenario, history){
-                if( this.subsistems == 1){
-                    this.Harmed += 50 * this.harmedPercent* this.People /50;
-                } else {
-                    var howMany = Math.floor(Math.random()*49)+1;
-                    //console.log(howMany , this.harmedPercent ,  this.People);
-                    this.Harmed += howMany * this.harmedPercent *  this.People/50;
-                }
-
+                var howMany = Math.floor(Math.random()*(this.subsistems -1 ))+1;
+                this.Harmed += howMany * this.harmedPercent *  this.People/this.subsistems;
+                this.setBelief("Breach", this.originalBelief);
             }
         }
     }
