@@ -1,8 +1,8 @@
 # insight
 
-Create INSIGHT scripts to create  Statistical models for future events. This method is good to obtain estimations for future scenarios or to compare two different solutions
+Create INSIGHT scripts to create  Statistical models for future events. This method is good to quickly obtain estimations for the efects of some future events (scenarios) or to compare two different solutions for a given problem.
 
-For example, we could create a very simple simulations about the effects of choosing a centralised or a descentralised software architecture  and we can compare the number of Harmed People:
+For example, we show bellow a very simple simulation script about the effects of choosing a centralised or a descentralised software architecture . After running this simulation in a big number of possible cases we can compare the number of Harmed people in both scenarios:
 
     var sim = {
         years:10,
@@ -48,3 +48,20 @@ For example, we could create a very simple simulations about the effects of choo
     h.print(res, "Centralised",     "Harmed");
     console.log("Estimated total number of causalities in Decentralised case:", res.sum("Decentralised", "Harmed"));
     h.print(res, "Decentralised",   "Harmed");
+
+    
+    The results could be something like:
+    
+    Estimated total number of causalities in Centralised case: 197235.61
+    Scenario  Centralised on dimension Harmed  Obtained in 100000 simulations
+              Years:        2016       2017       2018       2019       2020       2021       2022       2023       2024       2025
+             Harmed:           0   11183.31   10213.21    11611.6   15404.21   17309.01   19708.89   26706.09   35699.41   49399.88
+    
+    Estimated total number of causalities in Decentralised case: 98047.93
+    Scenario  Decentralised on dimension Harmed  Obtained in 100000 simulations
+              Years:        2016       2017       2018       2019       2020       2021       2022       2023       2024       2025
+             Harmed:           0    5178.56    5429.21    7045.56       7378    8462.13    9955.84   13213.96   16786.42   24598.25
+    
+
+
+
